@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ShowList from "./ShowList";
-import ShowOverlay from "./ShowOverlay";
-import Favourites from "./Favourites";
-import Carousel from "./Carousel";
-import { fetchShows } from "./ShowService";
+import ShowList from "./assets/components/ShowList";
+import ShowOverlay from "./assets/components/ShowOverlay";
+import Favourites from "./assets/components/Favourites";
+import Carousel from "./assets/components/Carousel";
+import { fetchShows } from "./assets/components/ShowService";
 /**
  * Main application component.
  * @returns {JSX.Element} The JSX element representing the application.
