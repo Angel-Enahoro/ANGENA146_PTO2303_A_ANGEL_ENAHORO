@@ -1,16 +1,20 @@
-// Favorites.jsx
 import PropTypes from "prop-types";
 
-function Favorites({ favorites, onRemoveFromFavorites }) {
+function Favourites({ favourites, onRemoveFromFavourites }) {
   return (
     <div>
-      <h1>Favorites</h1>
-      {favorites.map((favorite) => (
-        <div key={favorite.id}>
-          <h3>{favorite.title}</h3>
-          <p>Season: {favorite.season}</p>
-          <button onClick={() => onRemoveFromFavorites(favorite)}>
-            Remove from Favorites
+      <h1>Favourites</h1>
+      {favourites.map((favourite) => (
+        <div key={favourite.id}>
+          <h3>{favourite.title}</h3>
+          <p>Seasons: {favourite.seasons}</p>{" "}
+          {/* Display seasons instead of season */}
+          <button
+            onClick={() =>
+              onRemoveFromFavourites && onRemoveFromFavourites(favourite)
+            }
+          >
+            Remove from Favourites
           </button>
         </div>
       ))}
@@ -18,9 +22,9 @@ function Favorites({ favorites, onRemoveFromFavorites }) {
   );
 }
 
-Favorites.propTypes = {
-  favorites: PropTypes.array.isRequired,
-  onRemoveFromFavorites: PropTypes.func.isRequired,
+Favourites.propTypes = {
+  favourites: PropTypes.array.isRequired,
+  onRemoveFromFavourites: PropTypes.func.isRequired, // Make it optional
 };
 
-export default Favorites;
+export default Favourites;

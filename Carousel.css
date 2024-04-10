@@ -1,0 +1,22 @@
+/* Carousel.css */
+.carousel-container {
+    max-width: 800px; /* Set maximum width for the carousel */
+    margin: 0 auto; /* Center the carousel */
+    padding: 20px
+  }
+  
+  .show-item {
+    padding: 10px; /* Add padding around each show item */
+  }
+  
+  .show-item img {
+    max-width: 100%; /* Ensure images fit within the container */
+  }
+  
+  .show-info {
+    text-align: center; /* Center align show info */
+  }
+  
+  .show-info h3 {
+    margin-top: 10px; /* Add margin above the title */
+  }

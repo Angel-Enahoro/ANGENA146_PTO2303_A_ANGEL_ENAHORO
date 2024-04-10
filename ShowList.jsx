@@ -3,14 +3,22 @@ import PropTypes from "prop-types";
 import { fetchShows } from "./ShowService";
 import Fuse from "fuse.js";
 
-function ShowList({ onSelectShow, onAddToFavorites }) {
+/**
+ * Component to display a list of TV shows with filtering and sorting options.
+ * @param {Object} props - Props for the ShowList component.
+ * @param {Function} props.onShowClick - Function to handle clicks on a show.
+ * @returns {JSX.Element} JSX for the ShowList component.
+ */
+function ShowList({ onShowClick }) {
+  // State variables
   const [loadingInitialData, setLoadingInitialData] = useState(true);
   const [originalShows, setOriginalShows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState("all"); // State for selected genre
-  const [sortBy, setSortBy] = useState(""); // State for sort by option
+  const [selectedGenre, setSelectedGenre] = useState("all");
+  const [sortBy, setSortBy] = useState("");
 
+  // Fetch initial shows data
   useEffect(() => {
     const fetchInitialShows = async () => {
       try {
@@ -27,6 +35,7 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
     fetchInitialShows();
   }, []);
 
+  // Initialize Fuse instance for searching shows
   const fuse = React.useMemo(() => {
     const fuseOptions = {
       keys: ["title"],
@@ -35,6 +44,7 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
     return new Fuse(originalShows, fuseOptions);
   }, [originalShows]);
 
+  // Perform search when search term changes
   useEffect(() => {
     if (!searchTerm) {
       setSearchResults([]);
@@ -44,10 +54,7 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
     setSearchResults(results.map((result) => result.item));
   }, [searchTerm, fuse]);
 
-  const handleShowClick = (show) => {
-    onSelectShow(show);
-  };
-
+  // Event handlers
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -60,13 +67,7 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
     setSortBy(event.target.value);
   };
 
-  const handleAddToFavorites = (show) => {
-    onAddToFavorites(show);
-  };
-
-  // Extracting all unique genres from the originalShows
-  const genres = [...new Set(originalShows.map((show) => show.genre))];
-
+  // Function to sort shows based on selected sorting option
   const sortedShows = () => {
     let sorted = [...originalShows];
     if (sortBy === "titleAsc") {
@@ -81,17 +82,32 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
     return sorted;
   };
 
+  // List of genres
+  const genres = [
+    "Personal Growth",
+    "True Crime and Investigative Journalism",
+    "History",
+    "Comedy",
+    "Entertainment",
+    "Business",
+    "Fiction",
+    "News",
+    "Kids and Family",
+  ];
+
+  // JSX rendering
   return (
     <div>
       <h1>All Shows</h1>
-      <div>
+      <div style={{ marginBottom: "10px" }}>
+        {/* Search input */}
         <input
           type="text"
           placeholder="Search shows"
           value={searchTerm}
           onChange={handleSearchChange}
         />
-        {/* Dropdown for sorting */}
+        {/* Sort by dropdown */}
         <select value={sortBy} onChange={handleSortByChange}>
           <option value="">Sort By</option>
           <option value="titleAsc">Title (A-Z)</option>
@@ -99,7 +115,7 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
           <option value="dateAsc">Date Updated (Ascending)</option>
           <option value="dateDesc">Date Updated (Descending)</option>
         </select>
-        {/* Dropdown for filtering by genre */}
+        {/* Genre filter dropdown */}
         <select value={selectedGenre} onChange={handleGenreChange}>
           <option value="all">All Genres</option>
           {genres.map((genre, index) => (
@@ -109,27 +125,32 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
           ))}
         </select>
       </div>
+      {/* Show cards */}
       <div className="show-cards">
         {(searchResults.length > 0 ? searchResults : sortedShows())
           .filter((show) =>
-            selectedGenre === "all" ? true : show.genre === selectedGenre
+            selectedGenre === "all"
+              ? true
+              : show.genres.some((genreId) => genres[genreId] === selectedGenre)
           )
           .map((show) => (
             <div
               className="show-card"
               key={show.id}
-              onClick={() => handleShowClick(show)}
+              onClick={() => onShowClick(show)}
             >
-              <h3>{show.title}</h3>
-              <p>Last Updated: {new Date(show.updated).toLocaleDateString()}</p>
               <img
                 src={show.image}
                 alt={show.title}
                 style={{ maxWidth: "100%", height: "auto" }}
               />
-              <button onClick={() => handleAddToFavorites(show)}>
-                Add to Favorites
-              </button>
+              <h3>{show.title}</h3>
+              <p>Last Updated: {new Date(show.updated).toLocaleDateString()}</p>
+              <p>Seasons: {show.seasons}</p>{" "}
+              {/* Displaying the number of seasons */}
+              <p>
+                Genres: {show.genres.map((genre) => genres[genre]).join(", ")}
+              </p>
             </div>
           ))}
       </div>
@@ -138,9 +159,9 @@ function ShowList({ onSelectShow, onAddToFavorites }) {
   );
 }
 
+// Prop type validation
 ShowList.propTypes = {
-  onSelectShow: PropTypes.func.isRequired,
-  onAddToFavorites: PropTypes.func.isRequired,
+  onShowClick: PropTypes.func.isRequired,
 };
 
 export default ShowList;
