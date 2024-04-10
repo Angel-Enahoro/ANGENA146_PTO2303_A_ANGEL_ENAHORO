@@ -68,4 +68,3 @@ ShowDetail.propTypes = {
 };
 
 export default ShowDetail;
-
